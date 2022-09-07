@@ -4,6 +4,8 @@
 // Ref: https://www.glfw.org/docs/3.3/quick.html#quick_include
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
+// Include OpenGL function declarations from GLAD.
+#include "glad/glad.h"
 
 using std::cout;
 using std::endl;
@@ -12,6 +14,14 @@ using std::endl;
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error: %s\n", description);
+}
+
+// Process inputs with GLFW.
+static void processInput(GLFWwindow* window)
+{
+    // ESC key closes the application.
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
 int main()
@@ -43,9 +53,30 @@ int main()
         return -1;
     }
 
+    glfwMakeContextCurrent(window);
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        cout << "Failed to create OpenGL context." << endl;
+        glfwTerminate();
+        return -1;
+    }
+
+    glfwSwapInterval(1);
+    glClearColor(0.0f, 0.15f, 0.15, 1.0f);
+
+    // Log useful info.
+    cout << "OpenGL version " << glGetString(GL_VERSION) << endl;
+    cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
+    cout << "OpenGL renderer: " << glGetString(GL_RENDERER) << endl;
+    cout << "OpenGL vendor: " << glGetString(GL_VENDOR) << endl;
+
     // Main loop.
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        processInput(window);
+
         glfwSwapBuffers(window);
     }
 

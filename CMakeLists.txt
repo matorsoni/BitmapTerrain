@@ -12,12 +12,14 @@ add_subdirectory(deps/glfw)
 # Add `terrain` executable.
 add_executable(
     terrain
+    deps/glad/src/glad.c
     src/Main.cpp
 )
 
 target_include_directories(
     terrain
     PRIVATE
+        deps/glad/include
         deps/glfw/include
 )
 
