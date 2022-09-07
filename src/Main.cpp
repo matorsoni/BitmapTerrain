@@ -3,9 +3,11 @@
 // Macro to avoid GLFW including OpenGL header on it's own.
 // Ref: https://www.glfw.org/docs/3.3/quick.html#quick_include
 #define GLFW_INCLUDE_NONE
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 // Include OpenGL function declarations from GLAD.
-#include "glad/glad.h"
+#include <glad/glad.h>
+
+#include "ShaderProgram.hpp"
 
 using std::cout;
 using std::endl;
@@ -69,6 +71,48 @@ int main()
     cout << "OpenGL renderer: " << glGetString(GL_RENDERER) << endl;
     cout << "OpenGL vendor: " << glGetString(GL_VENDOR) << endl;
 
+    // Create basic shader program.
+    const auto program = ShaderProgram("../src/shader/Vert.glsl",
+                                       "../src/shader/Frag.glsl");
+    program.use();
+
+    // Mesh creation.
+    const float positions[8] = {
+        0.5f,  0.5f,
+        -0.5f, 0.5f,
+        -0.5f, -0.5f,
+        0.5f,  -0.5f
+    };
+
+    const unsigned int indices[6] = {
+        0, 1, 2,
+        2, 3, 0
+    };
+
+    unsigned int vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    unsigned int vbo;
+    glGenBuffers(1, &vbo);
+    unsigned int ebo;
+    glGenBuffers(1, &ebo);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER,
+                 8*sizeof(float),
+                 positions,
+                 GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 6 * sizeof(unsigned int),
+                 indices,
+                 GL_STATIC_DRAW);
+
     // Main loop.
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -76,6 +120,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         processInput(window);
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 
         glfwSwapBuffers(window);
     }

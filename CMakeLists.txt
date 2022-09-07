@@ -14,6 +14,7 @@ add_executable(
     terrain
     deps/glad/src/glad.c
     src/Main.cpp
+    src/ShaderProgram.cpp
 )
 
 target_include_directories(
