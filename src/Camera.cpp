@@ -8,7 +8,7 @@ using glm::vec4;
 using glm::mat4;
 
 Camera::Camera(float screen_aspect_ratio):
-    position_(vec3(-2.0f, 2.0f, 0.0f)),
+    position_(vec3(-10.0f, 4.0f, 0.0f)),
     orientation_(mat4(1.0f)),
     fov_y_(glm::radians(45.0f))
 {
