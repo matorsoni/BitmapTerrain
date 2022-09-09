@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include <glm/mat4x4.hpp>
+
 // Class abstraction for OpenGL shader program object.
 class ShaderProgram
 {
@@ -18,6 +20,9 @@ public:
     unsigned int getId() const;
     // Use program shader.
     void use() const;
+
+    // Set uniforms.
+    void setUniformMat4f(const char* uniform_name, const glm::mat4& mat) const;
 };
 
 

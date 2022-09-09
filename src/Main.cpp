@@ -6,7 +6,9 @@
 #include <GLFW/glfw3.h>
 // Include OpenGL function declarations from GLAD.
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 
+#include "Camera.hpp"
 #include "ShaderProgram.hpp"
 
 using std::cout;
@@ -77,11 +79,11 @@ int main()
     program.use();
 
     // Mesh creation.
-    const float positions[8] = {
-        0.5f,  0.5f,
-        -0.5f, 0.5f,
-        -0.5f, -0.5f,
-        0.5f,  -0.5f
+    const float positions[12] = {
+        0.5f,  0.0f, 0.5f,
+        -0.5f, 0.0f, 0.5f,
+        -0.5f, 0.0f, -0.5f,
+        0.5f,  0.0f, -0.5f
     };
 
     const unsigned int indices[6] = {
@@ -100,18 +102,28 @@ int main()
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER,
-                 8*sizeof(float),
+                 12 * sizeof(float),
                  positions,
                  GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                  6 * sizeof(unsigned int),
                  indices,
                  GL_STATIC_DRAW);
+
+    glm::mat4 model(1.0f);
+
+    Camera camera;
+    camera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+    camera.updateView();
+
+    program.setUniformMat4f("Model", model);
+    program.setUniformMat4f("View", camera.view());
+    program.setUniformMat4f("Projection", camera.projection());
 
     // Main loop.
     while(!glfwWindowShouldClose(window)) {

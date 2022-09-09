@@ -14,6 +14,7 @@ add_executable(
     terrain
     deps/glad/src/glad.c
     src/Main.cpp
+    src/Camera.cpp
     src/ShaderProgram.cpp
 )
 
@@ -22,6 +23,7 @@ target_include_directories(
     PRIVATE
         deps/glad/include
         deps/glfw/include
+        deps/glm
 )
 
 target_link_libraries(

@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 
 using namespace std;
+using glm::mat4;
 
 // Load shader source from the disk.
 static string loadShaderSource(const string& filename)
@@ -92,4 +93,15 @@ unsigned int ShaderProgram::getId() const
 void ShaderProgram::use() const
 {
     glUseProgram(id_);
+}
+
+void ShaderProgram::setUniformMat4f(const char* uniform_name, const glm::mat4& mat) const
+{
+    int uniform_location = glGetUniformLocation(id_, uniform_name);
+    if (uniform_location == -1) {
+        cout << "Unable to locate uniform " << uniform_name << endl;
+        return;
+    }
+
+    glUniformMatrix4fv(uniform_location, 1, GL_FALSE, &mat[0][0]);
 }
