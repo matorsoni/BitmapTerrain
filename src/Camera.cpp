@@ -7,17 +7,18 @@ using glm::vec3;
 using glm::vec4;
 using glm::mat4;
 
-Camera::Camera(float screen_aspect_ratio):
+Camera::Camera(int window_width, int window_height):
     position_(vec3(-10.0f, 4.0f, 0.0f)),
     orientation_(mat4(1.0f)),
     fov_y_(glm::radians(45.0f))
 {
-    assert(screen_aspect_ratio > 0.0f);
+    assert(window_width > 0);
+    assert(window_height > 0);
 
     // Define perspective constants.
     const float near_plane = 0.1f;
     const float far_plane = 100.0f;
-    const float ortho_factor = 2.0f;
+    const float screen_aspect_ratio = static_cast<float>(window_width) / window_height;
 
     // Build perspective projection matrix.
     projection_ = glm::perspective(fov_y_, screen_aspect_ratio, near_plane, far_plane);

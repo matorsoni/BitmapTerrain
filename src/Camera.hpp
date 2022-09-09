@@ -11,7 +11,7 @@ public:
     // Global camera up direction: Y axis.
     static constexpr glm::vec3 UP{0.0f, 1.0f, 0.0f};
 
-    Camera(float screen_aspect_ratio = 1.0f);
+    Camera(int window_width, int window_height);
 
     // Get position and orientation by reference.
     const glm::vec3& position() const;

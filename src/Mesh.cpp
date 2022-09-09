@@ -19,10 +19,10 @@ void createBitmapMesh(Mesh& mesh, unsigned char* bitmap, int width, int height)
     assert(mesh.vertices.empty());
     assert(mesh.indices.empty());
 
-    constexpr float dx = 0.4f;
-    constexpr float dz = 0.4f;
+    constexpr float dx = 0.2f;
+    constexpr float dz = 0.2f;
 
-    // Add vertices to the list. Each vertex represents a pixel on the grid.
+    // Add vertices to the list. Each vertex represents a pixel on the grid centered at the origin.
     const float x0 = (height - 1) * dx / 2.0f;
     const float z0 = -(width - 1) * dz / 2.0f;
     float x = x0;

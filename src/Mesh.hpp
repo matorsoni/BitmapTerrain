@@ -19,7 +19,7 @@ struct Mesh
 };
 
 // Create a mesh from input Bitmap, centered at the origin on ZX plane.
-// Input Mesh object must be empty (implemeted to avoid copying the object on function return).
+// Input Mesh object must be empty (in order to avoid copying the object on function return).
 void createBitmapMesh(Mesh& mesh, unsigned char* bitmap, int width, int height);
 
 #endif // MESH_HPP

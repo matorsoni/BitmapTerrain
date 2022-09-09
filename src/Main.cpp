@@ -8,6 +8,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
+#include "Bitmap.hpp"
 #include "Camera.hpp"
 #include "Mesh.hpp"
 #include "ShaderProgram.hpp"
@@ -84,23 +85,29 @@ int main()
     program.use();
 
     // Mesh creation.
-    Mesh square;
-    unsigned char bitmap[256] = {66, 10, 20, 102, 221, 189, 179, 63, 106, 165, 150, 81, 235, 37, 243, 215, 122, 137, 178, 41, 93, 245, 254, 159, 123, 139, 242, 226, 114, 126, 238, 89, 47, 223, 86, 141, 32, 171, 225, 84, 85, 231, 153, 130, 96, 110, 194, 146, 239, 175, 185, 253, 27, 144, 214, 70, 109, 103, 187, 115, 35, 19, 203, 252, 202, 108, 22, 72, 12, 79, 28, 191, 97, 1, 255, 204, 161, 163, 131, 125, 113, 212, 249, 180, 23, 220, 90, 30, 2, 107, 206, 11, 209, 21, 217, 190, 162, 129, 157, 38, 154, 152, 184, 156, 173, 207, 134, 140, 116, 151, 169, 120, 33, 117, 127, 196, 236, 201, 135, 40, 8, 147, 247, 219, 172, 248, 65, 124, 48, 4, 167, 82, 44, 211, 71, 3, 91, 45, 176, 55, 133, 56, 6, 39, 164, 208, 105, 5, 168, 43, 192, 246, 26, 7, 177, 13, 112, 251, 68, 29, 54, 197, 64, 136, 49, 233, 145, 52, 76, 50, 210, 77, 121, 148, 234, 73, 213, 80, 9, 83, 128, 244, 0, 59, 42, 75, 111, 155, 237, 95, 100, 227, 60, 195, 160, 92, 18, 241, 88, 67, 101, 198, 51, 200, 31, 15, 104, 170, 174, 34, 183, 142, 94, 250, 205, 149, 16, 46, 230, 158, 229, 17, 74, 78, 240, 193, 57, 69, 58, 182, 222, 138, 224, 232, 132, 181, 61, 216, 186, 14, 199, 188, 143, 25, 166, 218, 118, 98, 87, 36, 119, 99, 228, 53, 24, 62};
-    createBitmapMesh(square, bitmap, 18, 18);
+    Mesh terrain;
+    {
+        Bitmap bitmap;
+        auto success = bitmap.loadFromFile("../assets/bitmap.png");
+        if (!success) {
+            cout << "Failed loading image from file." << endl;
+            return -1;
+        }
 
-    unsigned int vao;
+        createBitmapMesh(terrain, bitmap.data(), bitmap.width(), bitmap.height());
+    }
+
+    // Set OpenGL's Vertex Array Object and pass vertex data to the GPU.
+    unsigned int vao, vbo, ebo;
     glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    unsigned int vbo;
     glGenBuffers(1, &vbo);
-    unsigned int ebo;
     glGenBuffers(1, &ebo);
 
+    glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER,
-                 square.vertices.size() * sizeof(Vertex),
-                 square.vertices.data(),
+                 terrain.vertices.size() * sizeof(Vertex),
+                 terrain.vertices.data(),
                  GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
@@ -108,13 +115,13 @@ int main()
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 square.indices.size() * sizeof(unsigned int),
-                 square.indices.data(),
+                 terrain.indices.size() * sizeof(unsigned int),
+                 terrain.indices.data(),
                  GL_STATIC_DRAW);
 
     glm::mat4 model(1.0f);
 
-    Camera camera;
+    Camera camera(window_width, window_height);
     camera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
     camera.updateView();
 
@@ -130,7 +137,7 @@ int main()
 
         processInput(window);
 
-        glDrawElements(GL_TRIANGLES, square.indices.size(), GL_UNSIGNED_INT, (void*)0);
+        glDrawElements(GL_TRIANGLES, terrain.indices.size(), GL_UNSIGNED_INT, (void*)0);
 
         glfwSwapBuffers(window);
     }

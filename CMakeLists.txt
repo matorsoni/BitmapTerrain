@@ -14,6 +14,7 @@ add_executable(
     terrain
     deps/glad/src/glad.c
     src/Main.cpp
+    src/Bitmap.cpp
     src/Camera.cpp
     src/Mesh.cpp
     src/ShaderProgram.cpp
@@ -25,6 +26,7 @@ target_include_directories(
         deps/glad/include
         deps/glfw/include
         deps/glm
+        deps/stb
 )
 
 target_link_libraries(
