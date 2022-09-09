@@ -15,6 +15,7 @@ add_executable(
     deps/glad/src/glad.c
     src/Main.cpp
     src/Camera.cpp
+    src/Mesh.cpp
     src/ShaderProgram.cpp
 )
 

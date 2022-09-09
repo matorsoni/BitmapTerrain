@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 
 #include "Camera.hpp"
+#include "Mesh.hpp"
 #include "ShaderProgram.hpp"
 
 using std::cout;
@@ -65,7 +66,11 @@ int main()
     }
 
     glfwSwapInterval(1);
+    // Background color.
     glClearColor(0.0f, 0.15f, 0.15, 1.0f);
+    // Render on wireframe or fill mode.
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     // Log useful info.
     cout << "OpenGL version " << glGetString(GL_VERSION) << endl;
@@ -79,18 +84,10 @@ int main()
     program.use();
 
     // Mesh creation.
-    const float positions[12] = {
-        0.5f,  0.0f, 0.5f,
-        -0.5f, 0.0f, 0.5f,
-        -0.5f, 0.0f, -0.5f,
-        0.5f,  0.0f, -0.5f
-    };
-
-    const unsigned int indices[6] = {
-        0, 1, 2,
-        2, 3, 0
-    };
-
+    Mesh square;
+    unsigned char bitmap[4] = {150, 20, 10, 5};
+    createBitmapMesh(square, bitmap, 2, 2);
+for (auto v : square.vertices) {cout << v.pos[0] << " " << v.pos[1] << " " << v.pos[2] << endl;}
     unsigned int vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -102,8 +99,8 @@ int main()
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER,
-                 12 * sizeof(float),
-                 positions,
+                 square.vertices.size() * sizeof(Vertex),
+                 square.vertices.data(),
                  GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
@@ -111,8 +108,8 @@ int main()
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 6 * sizeof(unsigned int),
-                 indices,
+                 square.indices.size() * sizeof(unsigned int),
+                 square.indices.data(),
                  GL_STATIC_DRAW);
 
     glm::mat4 model(1.0f);
