@@ -12,6 +12,7 @@
 #include "Bitmap.hpp"
 #include "Camera.hpp"
 #include "Mesh.hpp"
+#include "MeshRenderer.hpp"
 #include "ShaderProgram.hpp"
 
 using std::cout;
@@ -91,67 +92,30 @@ int main(int argc, char** argv)
     }
 
     glfwSwapInterval(1);
-    // Background color.
-    glClearColor(0.0f, 0.15f, 0.15, 1.0f);
-    // Render on wireframe or fill mode.
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    // Log useful info.
-    cout << "OpenGL version " << glGetString(GL_VERSION) << endl;
-    cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
-    cout << "OpenGL renderer: " << glGetString(GL_RENDERER) << endl;
-    cout << "OpenGL vendor: " << glGetString(GL_VENDOR) << endl;
 
     // Create basic shader program.
     const auto program = ShaderProgram("../src/shader/Vert.glsl",
                                        "../src/shader/Frag.glsl");
-    program.use();
 
-    // Mesh creation.
+    // Create terrain mesh.
     Mesh terrain;
     {
         Bitmap bitmap;
         auto success = bitmap.loadFromFile(path_to_img);
         if (!success) {
-            cout << "Failed loading image from file." << endl;
+            cout << "Failed loading image from file: " << path_to_img << endl;
             return -1;
         }
 
         createBitmapMesh(terrain, bitmap.data(), bitmap.width(), bitmap.height());
     }
 
-    // Set OpenGL's Vertex Array Object and pass vertex data to the GPU.
-    unsigned int vao, vbo, ebo;
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
-
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER,
-                 terrain.vertices.size() * sizeof(Vertex),
-                 terrain.vertices.data(),
-                 GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 terrain.indices.size() * sizeof(unsigned int),
-                 terrain.indices.data(),
-                 GL_STATIC_DRAW);
-
-    glm::mat4 model(1.0f);
-
+    // Define camera position and orientation.
     Camera camera(window_width, window_height);
     camera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-    camera.updateView();
 
-    program.setUniformMat4f("Model", model);
-    program.setUniformMat4f("View", camera.view());
-    program.setUniformMat4f("Projection", camera.projection());
+    MeshRenderer renderer;
+    renderer.updateMesh(terrain);
 
     // Main loop.
     while(!glfwWindowShouldClose(window)) {
@@ -159,9 +123,7 @@ int main(int argc, char** argv)
 
         processInput(window);
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glDrawElements(GL_TRIANGLES, terrain.indices.size(), GL_UNSIGNED_INT, (void*)0);
+        renderer.draw(camera, program);
 
         glfwSwapBuffers(window);
     }
