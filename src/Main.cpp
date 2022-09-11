@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 // Macro to avoid GLFW including OpenGL header on it's own.
 // Ref: https://www.glfw.org/docs/3.3/quick.html#quick_include
@@ -15,6 +16,7 @@
 
 using std::cout;
 using std::endl;
+using std::string;
 
 // Create GLFW error callback function.
 static void glfw_error_callback(int error, const char* description)
@@ -30,8 +32,30 @@ static void processInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
-int main()
+// Parse arguments. Possible inputs are:
+// - No inputs -> Render default image (../assets/bitmap.png).
+// - Path to image -> Render input image.
+string parseArguments(int argc, char** argv)
 {
+    if (argc == 1) {
+        return "../assets/bitmap.png";
+    }
+    else if (argc == 2) {
+        return argv[1];
+    }
+    else {
+        cout << "Only 1 argument is accepted." << endl;
+        return "";
+    }
+}
+
+int main(int argc, char** argv)
+{
+    string path_to_img = parseArguments(argc, argv);
+    if (path_to_img.size() == 0) {
+        return -1;
+    }
+
     // Initialize GLFW with error callback.
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
@@ -88,7 +112,7 @@ int main()
     Mesh terrain;
     {
         Bitmap bitmap;
-        auto success = bitmap.loadFromFile("../assets/bitmap.png");
+        auto success = bitmap.loadFromFile(path_to_img);
         if (!success) {
             cout << "Failed loading image from file." << endl;
             return -1;
@@ -133,9 +157,9 @@ int main()
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         processInput(window);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glDrawElements(GL_TRIANGLES, terrain.indices.size(), GL_UNSIGNED_INT, (void*)0);
 
