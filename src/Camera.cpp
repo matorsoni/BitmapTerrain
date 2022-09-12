@@ -10,7 +10,8 @@ using glm::mat4;
 Camera::Camera(int window_width, int window_height):
     position_(vec3(-10.0f, 4.0f, 0.0f)),
     orientation_(mat4(1.0f)),
-    fov_y_(glm::radians(45.0f))
+    fov_y_(glm::radians(45.0f)),
+    speed_(0.1f)
 {
     assert(window_width > 0);
     assert(window_height > 0);
@@ -42,6 +43,26 @@ const mat4& Camera::view() const
 const mat4& Camera::projection() const
 {
     return projection_;
+}
+
+void Camera::moveForwards()
+{
+    position_ -= speed_ * vec3(orientation_[2]);
+}
+
+void Camera::moveBackwards()
+{
+    position_ += speed_ * vec3(orientation_[2]);
+}
+
+void Camera::moveRight()
+{
+    position_ += speed_ * vec3(orientation_[0]);
+}
+
+void Camera::moveLeft()
+{
+    position_ -= speed_ * vec3(orientation_[0]);
 }
 
 void Camera::updateView()

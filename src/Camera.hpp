@@ -21,6 +21,12 @@ public:
     const glm::mat4& view() const;
     const glm::mat4& projection() const;
 
+    // Move camera.
+    void moveForwards();
+    void moveBackwards();
+    void moveRight();
+    void moveLeft();
+
     // Update View matrix.
     // This method should be called right before rendering.
     void updateView();
@@ -47,6 +53,7 @@ private:
 
     // Vertical field of view, in radians.
     float fov_y_;
+    float speed_;
 };
 
 #endif // CAMERA_HPP

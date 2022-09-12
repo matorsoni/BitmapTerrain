@@ -19,11 +19,21 @@ using std::endl;
 using std::string;
 
 // Process inputs with GLFW.
-static void processInput(GLFWwindow* window)
+static void processInput(GLFWwindow* window, Camera& camera)
 {
     // ESC key closes the application.
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+
+    // Process camera movement.
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.moveForwards();
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.moveBackwards();
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.moveRight();
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.moveLeft();
 }
 
 // Parse arguments. Possible inputs are:
@@ -86,7 +96,7 @@ int main(int argc, char** argv)
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
-        processInput(window);
+        processInput(window, camera);
 
         renderer.draw(camera, program);
 
