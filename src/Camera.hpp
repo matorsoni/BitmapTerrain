@@ -13,12 +13,9 @@ public:
 
     Camera(int window_width, int window_height);
 
-    // Get position and orientation by reference.
+    // Getter methods.
     const glm::vec3& position() const;
-    const glm::mat4& orientation() const;
-
-    // Get transformations by reference.
-    const glm::mat4& view() const;
+    const glm::mat4& view();
     const glm::mat4& projection() const;
 
     // Move camera.
@@ -27,19 +24,18 @@ public:
     void moveRight();
     void moveLeft();
 
-    // Update View matrix.
-    // This method should be called right before rendering.
-    void updateView();
-
-    void setPosition(const glm::vec3& pos);
-
-    // Update camera orientation to follow the target.
-    void lookAt(const glm::vec3& target);
+    // Turn camera by input angles.
+    void turn(float deltaPitch, float deltaYaw);
 
 private:
 
+    // Update camera orientation from pitch and yaw.
+    void _updateOrientation();
+    // Update View matrix from camera's orientation and position.
+    void _updateView();
+
     // Position and orientation in global coordinates.
-    // Orientation is the following matrix, with normalized Ex, Ey and Ez.
+    // Orientation is the following matrix, with orthonormal Ex, Ey and Ez.
     // | .  | .  | .  | 0  |
     // | Ex | Ey | Ez | 0  |
     // | .  | .  | .  | 0  |
@@ -50,6 +46,11 @@ private:
     // Transformations.
     glm::mat4 view_;
     glm::mat4 projection_;
+
+    // Pitch = Camera "up and down" angle, in degrees.
+    // Yaw   = Camera "left and right" angle, in degrees.
+    float pitch_;
+    float yaw_;
 
     // Vertical field of view, in radians.
     float fov_y_;

@@ -60,9 +60,6 @@ void MeshRenderer::draw(Camera& camera, const ShaderProgram& program) const
     // Static declaration of `model` transformation since we are not moving the mesh's position.
     static glm::mat4 model(1.0f);
 
-    // Update camera's internal matrices.
-    camera.updateView();
-
     program.use();
     program.setUniformMat4f("Model", model);
     program.setUniformMat4f("View", camera.view());

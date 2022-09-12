@@ -6,11 +6,18 @@
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
+using glm::radians;
+using glm::cross;
+using glm::normalize;
 
 Camera::Camera(int window_width, int window_height):
     position_(vec3(-10.0f, 4.0f, 0.0f)),
     orientation_(mat4(1.0f)),
-    fov_y_(glm::radians(45.0f)),
+    view_(mat4(1.0f)),
+    projection_(mat4(1.0f)),
+    pitch_(-30.0f),
+    yaw_(0.0f),
+    fov_y_(radians(45.0f)),
     speed_(0.1f)
 {
     assert(window_width > 0);
@@ -30,13 +37,9 @@ const vec3& Camera::position() const
     return position_;
 }
 
-const mat4& Camera::orientation() const
+const mat4& Camera::view()
 {
-    return orientation_;
-}
-
-const mat4& Camera::view() const
-{
+    _updateView();
     return view_;
 }
 
@@ -65,7 +68,40 @@ void Camera::moveLeft()
     position_ -= speed_ * vec3(orientation_[0]);
 }
 
-void Camera::updateView()
+void Camera::turn(float deltaPitch, float deltaYaw)
+{
+    pitch_ += deltaPitch;
+    yaw_ += deltaYaw;
+
+    if (pitch_ > 85.0f)
+        pitch_ = 85.0f;
+    else if (pitch_ < -85.0f)
+        pitch_ = -85.0f;
+
+    _updateOrientation();
+}
+
+void Camera::_updateOrientation()
+{
+    // Define camera's look direction.
+    float x = cosf(radians(pitch_)) * sinf(radians(yaw_));
+    float y = sinf(radians(pitch_));
+    float z = cosf(radians(pitch_)) * cosf(radians(yaw_));
+    vec3 look(x, y, z);
+
+    // Construct camera's orthonormal frame.
+    vec3 cam_x = normalize(cross(look, UP));
+    vec3 cam_y = cross(cam_x, look);
+    vec3 cam_z = -look;
+
+    // Update orientation matrix.
+    orientation_[0] = vec4(cam_x, 0.0f);
+    orientation_[1] = vec4(cam_y, 0.0f);
+    orientation_[2] = vec4(cam_z, 0.0f);
+    assert(orientation_[3] == vec4(0.0f, 0.0f, 0.0f, 1.0f));
+}
+
+void Camera::_updateView()
 {
     // View matrix is the inverse of:
     // | .  | .  | .  | .  | -1          | .  | Ex | .  | 0  |     | 1  | 0  | 0  | .  |
@@ -81,21 +117,4 @@ void Camera::updateView()
 
     // Update view.
     view_ = glm::transpose(orientation_) * inv_translation;
-}
-
-void Camera::setPosition(const glm::vec3& pos)
-{
-    position_ = pos;
-}
-
-void Camera::lookAt(const vec3& target)
-{
-    vec3 Ez = glm::normalize(position_ - target);
-    vec3 Ex = glm::normalize(glm::cross(UP, Ez));
-    vec3 Ey = glm::cross(Ez, Ex);
-
-    orientation_[0] = vec4(Ex, 0.0f);
-    orientation_[1] = vec4(Ey, 0.0f);
-    orientation_[2] = vec4(Ez, 0.0f);
-    assert(orientation_[3] == vec4(0.0f, 0.0f, 0.0f, 1.0f));
 }

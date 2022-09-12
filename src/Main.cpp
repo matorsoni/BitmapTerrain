@@ -87,7 +87,10 @@ int main(int argc, char** argv)
 
     // Define camera position and orientation.
     Camera camera(window_width, window_height);
-    camera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+    //camera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+
+    control.camera_ptr = &camera;
+    setInputCallbacks(window);
 
     MeshRenderer renderer;
     renderer.updateMesh(terrain);

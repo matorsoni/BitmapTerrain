@@ -10,6 +10,8 @@
 // Include OpenGL functions from GLAD instead.
 #include <glad/glad.h>
 
+#include "Camera.hpp"
+
 using std::cout;
 using std::endl;
 
@@ -62,4 +64,28 @@ void cleanupWindow(GLFWwindow* window)
 {
     glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+Control control;
+
+static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    static float last_x = 640;
+    static float last_y = 360;
+    float delta_x = xpos - last_x;
+    float delta_y = ypos - last_y;
+
+    const static float sensitivity = 0.1f;
+    float delta_pitch = -delta_y * sensitivity;
+    float delta_yaw = -delta_x * sensitivity;
+    control.camera_ptr->turn(delta_pitch, delta_yaw);
+
+    last_x = xpos;
+    last_y = ypos;
+}
+
+void setInputCallbacks(GLFWwindow* window)
+{
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mouse_callback);
 }
