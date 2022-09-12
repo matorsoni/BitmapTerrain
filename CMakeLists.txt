@@ -19,6 +19,7 @@ add_executable(
     src/Mesh.cpp
     src/MeshRenderer.cpp
     src/ShaderProgram.cpp
+    src/Window.cpp
 )
 
 target_include_directories(
