@@ -65,14 +65,16 @@ int main(int argc, char** argv)
     // Create camera.
     Camera camera(window_width, window_height);
 
+    // Create renderer.
+    MeshRenderer renderer;
+    renderer.updateMesh(terrain);
+
     // Setup input handler, passing every object that will respond to external inputs.
     HANDLER.window_width = window_width;
     HANDLER.window_height = window_height;
     HANDLER.camera_ptr = &camera;
+    HANDLER.renderer_ptr = &renderer;
     setInputCallbacks(window);
-
-    MeshRenderer renderer;
-    renderer.updateMesh(terrain);
 
     // Main loop.
     while(!shouldClose(window)) {

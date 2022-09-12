@@ -11,8 +11,14 @@ class MeshRenderer
 public:
     MeshRenderer();
 
+    // Set reference to the mesh that will be rendered and send data to the GPU.
     void updateMesh(const Mesh& mesh);
+
+    // Render mesh specifying camera and shaders.
     void draw(Camera& camera, const ShaderProgram& program) const;
+
+    // Switch wireframe mode on and off.
+    void toggleWireframeOnOff();
 
 private:
     // Reference to the mesh that will be rendered.

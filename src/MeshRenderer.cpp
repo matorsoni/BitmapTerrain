@@ -76,3 +76,8 @@ void MeshRenderer::draw(Camera& camera, const ShaderProgram& program) const
     // Unbind VAO after finishing.
     glBindVertexArray(0);
 }
+
+void MeshRenderer::toggleWireframeOnOff()
+{
+    wireframe_ = !wireframe_;
+}
