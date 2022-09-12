@@ -66,26 +66,12 @@ void cleanupWindow(GLFWwindow* window)
     glfwTerminate();
 }
 
-Control control;
-
-static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+bool shouldClose(GLFWwindow* window)
 {
-    static float last_x = 640;
-    static float last_y = 360;
-    float delta_x = xpos - last_x;
-    float delta_y = ypos - last_y;
-
-    const static float sensitivity = 0.1f;
-    float delta_pitch = -delta_y * sensitivity;
-    float delta_yaw = -delta_x * sensitivity;
-    control.camera_ptr->turn(delta_pitch, delta_yaw);
-
-    last_x = xpos;
-    last_y = ypos;
+    return static_cast<bool>(glfwWindowShouldClose(window));
 }
 
-void setInputCallbacks(GLFWwindow* window)
+void swapBuffers(GLFWwindow* window)
 {
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSwapBuffers(window);
 }

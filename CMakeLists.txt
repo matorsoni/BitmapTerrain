@@ -16,6 +16,7 @@ add_executable(
     src/Main.cpp
     src/Bitmap.cpp
     src/Camera.cpp
+    src/InputHandler.cpp
     src/Mesh.cpp
     src/MeshRenderer.cpp
     src/ShaderProgram.cpp

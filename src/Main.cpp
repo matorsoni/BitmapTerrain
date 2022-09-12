@@ -1,14 +1,9 @@
 #include <iostream>
 #include <string>
 
-// Macro to avoid GLFW including OpenGL header on it's own.
-// Ref: https://www.glfw.org/docs/3.3/quick.html#quick_include
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-
 #include "Bitmap.hpp"
 #include "Camera.hpp"
+#include "InputHandler.hpp"
 #include "Mesh.hpp"
 #include "MeshRenderer.hpp"
 #include "ShaderProgram.hpp"
@@ -17,24 +12,6 @@
 using std::cout;
 using std::endl;
 using std::string;
-
-// Process inputs with GLFW.
-static void processInput(GLFWwindow* window, Camera& camera)
-{
-    // ESC key closes the application.
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-
-    // Process camera movement.
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.moveForwards();
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.moveBackwards();
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.moveRight();
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.moveLeft();
-}
 
 // Parse arguments. Possible inputs are:
 // - No inputs -> Render default image (../assets/bitmap.png).
@@ -85,25 +62,26 @@ int main(int argc, char** argv)
         createBitmapMesh(terrain, bitmap.data(), bitmap.width(), bitmap.height());
     }
 
-    // Define camera position and orientation.
+    // Create camera.
     Camera camera(window_width, window_height);
-    //camera.lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
-    control.camera_ptr = &camera;
+    // Setup input handler, passing every object that will respond to external inputs.
+    HANDLER.window_width = window_width;
+    HANDLER.window_height = window_height;
+    HANDLER.camera_ptr = &camera;
     setInputCallbacks(window);
 
     MeshRenderer renderer;
     renderer.updateMesh(terrain);
 
     // Main loop.
-    while(!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-
-        processInput(window, camera);
+    while(!shouldClose(window)) {
+        processCallbackEvents();
+        processNonCallbackEvents(window);
 
         renderer.draw(camera, program);
 
-        glfwSwapBuffers(window);
+        swapBuffers(window);
     }
 
     cleanupWindow(window);
