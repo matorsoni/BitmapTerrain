@@ -21,8 +21,7 @@ Vertex::Vertex(float x, float y, float z, float u, float v):
 void createBitmapMesh(Mesh& mesh,
                       unsigned char* bitmap,
                       int width,
-                      int height,
-                      float scale)
+                      int height)
 {
     assert(width >= 1);
     assert(height >= 1);
@@ -46,7 +45,7 @@ void createBitmapMesh(Mesh& mesh,
         float z = z0;
         float u = 0.0f;
         for (int j = 0; j < width; ++j) {
-            float y = scale * static_cast<float>(*bitmap++) / 255.f;
+            float y = static_cast<float>(*bitmap++) / 255.f;
             mesh.vertices.emplace_back(x, y, z, u, v);
             z += dz;
             u += du;

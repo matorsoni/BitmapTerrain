@@ -70,13 +70,16 @@ void Camera::moveLeft()
 
 void Camera::turn(float deltaPitch, float deltaYaw)
 {
+    static constexpr float lower_bound = -85.0f;
+    static constexpr float upper_bound = 85.0f;
+
     pitch_ += deltaPitch;
     yaw_ += deltaYaw;
 
-    if (pitch_ > 85.0f)
-        pitch_ = 85.0f;
-    else if (pitch_ < -85.0f)
-        pitch_ = -85.0f;
+    if (pitch_ > upper_bound)
+        pitch_ = upper_bound;
+    else if (pitch_ < lower_bound)
+        pitch_ = lower_bound;
 
     _updateOrientation();
 }

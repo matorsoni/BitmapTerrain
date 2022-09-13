@@ -21,12 +21,13 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     HANDLER.assertionCheck();
 
+    // Last position declared as static to save its state in each iteration.
     static float last_x = HANDLER.window_width / 2;
     static float last_y = HANDLER.window_height / 2;
     float delta_x = xpos - last_x;
     float delta_y = ypos - last_y;
 
-    const static float sensitivity = 0.1f;
+    static constexpr float sensitivity = 0.1f;
     float delta_pitch = -delta_y * sensitivity;
     float delta_yaw = -delta_x * sensitivity;
     HANDLER.camera_ptr->turn(delta_pitch, delta_yaw);
@@ -43,13 +44,26 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
     if (key == GLFW_KEY_F && action == GLFW_PRESS)
         HANDLER.renderer_ptr->toggleWireframeOnOff();
+    if (key == GLFW_KEY_T && action == GLFW_PRESS)
+        HANDLER.renderer_ptr->toggleTextureOnOff();
+}
+
+// Callback that listens to mouse scroll event.
+static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    HANDLER.assertionCheck();
+    static constexpr float sensitivity = 0.1f;
+    HANDLER.renderer_ptr->controlYScale(yoffset * sensitivity);
 }
 
 void setInputCallbacks(GLFWwindow* window)
 {
+    // Lock the cursor and make it invisible.
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetKeyCallback(window, key_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 }
 
 void processCallbackEvents()

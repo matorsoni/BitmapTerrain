@@ -6,7 +6,6 @@
 
 #include "Camera.hpp"
 #include "Mesh.hpp"
-#include "ShaderProgram.hpp"
 #include "Texture.hpp"
 
 using std::cout;
@@ -15,7 +14,13 @@ using std::endl;
 MeshRenderer::MeshRenderer():
     mesh_ptr_(nullptr),
     tex_ptr_(nullptr),
+    shader_color_("../src/shader/Vert.glsl",
+                  "../src/shader/Frag.glsl"),
+    shader_texture_("../src/shader/Vert_Texture.glsl",
+                     "../src/shader/Frag_Texture.glsl"),
     wireframe_(true),
+    textured_(true),
+    yscale_(3.0f),
     vao_(0), vbo_(0), ebo_(0)
 {
     glGenVertexArrays(1, &vao_);
@@ -65,22 +70,25 @@ void MeshRenderer::setTexture(const Texture& texture)
     tex_ptr_ = &texture;
 }
 
-void MeshRenderer::draw(Camera& camera, const ShaderProgram& program) const
+void MeshRenderer::draw(Camera& camera) const
 {
-    assert(mesh_ptr_ != nullptr);
+    assert(mesh_ptr_);
+    assert(tex_ptr_);
 
-    // Static declaration of `model` transformation since we are not moving the mesh's position.
+    // Model transformation to change the mesh's position in space.
     static glm::mat4 model(1.0f);
+    model[1][1] = yscale_;
 
-    program.use();
-    program.setUniformMat4f("Model", model);
-    program.setUniformMat4f("View", camera.view());
-    program.setUniformMat4f("Projection", camera.projection());
-
-    if (tex_ptr_ != nullptr) {
+    // Select shader program.
+    const ShaderProgram& shader = textured_ ? shader_texture_ : shader_color_;
+    shader.use();
+    if (textured_) {
         tex_ptr_->bind();
-        program.setUniform1i("tex_sampler", 0);
+        shader.setUniform1i("tex_sampler", 0);
     }
+    shader.setUniformMat4f("Model", model);
+    shader.setUniformMat4f("View", camera.view());
+    shader.setUniformMat4f("Projection", camera.projection());
 
     // Render on wireframe or fill mode.
     glPolygonMode(GL_FRONT_AND_BACK, wireframe_ ? GL_LINE : GL_FILL);
@@ -97,4 +105,23 @@ void MeshRenderer::draw(Camera& camera, const ShaderProgram& program) const
 void MeshRenderer::toggleWireframeOnOff()
 {
     wireframe_ = !wireframe_;
+}
+
+void MeshRenderer::toggleTextureOnOff()
+{
+    textured_ = !textured_;
+}
+
+void MeshRenderer::controlYScale(float delta)
+{
+    static constexpr float lower_bound = 0.5f;
+    static constexpr float upper_bound = 10.0f;
+
+    yscale_ += delta;
+    if (yscale_ < lower_bound) {
+        yscale_ = lower_bound;
+    }
+    else if (yscale_ > upper_bound) {
+        yscale_ = upper_bound;
+    }
 }

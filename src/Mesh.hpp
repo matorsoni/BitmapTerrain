@@ -26,7 +26,6 @@ struct Mesh
 void createBitmapMesh(Mesh& mesh,
                       unsigned char* bitmap,
                       int width,
-                      int height,
-                      float scale = 1.0f);
+                      int height);
 
 #endif // MESH_HPP

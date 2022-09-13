@@ -7,7 +7,6 @@
 #include "InputHandler.hpp"
 #include "Mesh.hpp"
 #include "MeshRenderer.hpp"
-#include "ShaderProgram.hpp"
 #include "Texture.hpp"
 #include "Window.hpp"
 
@@ -17,7 +16,7 @@ using std::string;
 
 // Parse arguments. Possible inputs are:
 // - No inputs -> Render default image (../assets/bitmap.png).
-// - Path to image -> Render input image.
+// - 1 Path to image -> Render input image.
 string parseArguments(int argc, char** argv)
 {
     if (argc == 1) {
@@ -47,12 +46,6 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    // Create basic shader program.
-    const auto program_color = ShaderProgram("../src/shader/Vert.glsl",
-                                             "../src/shader/Frag.glsl");
-    const auto program_texture = ShaderProgram("../src/shader/Vert_Texture.glsl",
-                                               "../src/shader/Frag_Texture.glsl");
-
     // Create terrain mesh from grayscale bitmap.
     Mesh terrain;
     {
@@ -64,7 +57,7 @@ int main(int argc, char** argv)
         }
 
         assert(bitmap.channels() == 1);
-        createBitmapMesh(terrain, bitmap.data(), bitmap.width(), bitmap.height(), 3.0f);
+        createBitmapMesh(terrain, bitmap.data(), bitmap.width(), bitmap.height());
     }
 
     // Create texture.
@@ -101,7 +94,7 @@ int main(int argc, char** argv)
         processCallbackEvents();
         processNonCallbackEvents(window);
 
-        renderer.draw(camera, program_texture);
+        renderer.draw(camera);
 
         swapBuffers(window);
     }
