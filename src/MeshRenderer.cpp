@@ -7,6 +7,7 @@
 #include "Camera.hpp"
 #include "Mesh.hpp"
 #include "ShaderProgram.hpp"
+#include "Texture.hpp"
 
 using std::cout;
 using std::endl;
@@ -40,8 +41,12 @@ void MeshRenderer::updateMesh(const Mesh& mesh)
                  mesh.vertices.data(),
                  GL_STATIC_DRAW);
 
+    // Position data on layout 0 for the vertex shader.
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    // Texture data on layout 1 for the vertex shader.
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
@@ -75,6 +80,14 @@ void MeshRenderer::draw(Camera& camera, const ShaderProgram& program) const
 
     // Unbind VAO after finishing.
     glBindVertexArray(0);
+}
+
+void MeshRenderer::draw(Camera& camera, const ShaderProgram& program, const Texture& texture) const
+{
+    texture.bind();
+    program.use();
+    program.setUniform1i("tex_sampler", 0);
+    draw(camera, program);
 }
 
 void MeshRenderer::toggleWireframeOnOff()

@@ -23,6 +23,7 @@ public:
 
     // Set uniforms.
     void setUniformMat4f(const char* uniform_name, const glm::mat4& mat) const;
+    void setUniform1i(const char* uniform_name, int value) const;
 };
 
 

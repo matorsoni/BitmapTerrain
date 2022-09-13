@@ -2,6 +2,7 @@
 #define MESH_HPP
 
 #include <vector>
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
 // Every piece of data contained in a vertex (position, color, normal...).
@@ -9,7 +10,9 @@ struct Vertex
 {
     Vertex();
     Vertex(float x, float y, float z);
+    Vertex(float x, float y, float z, float u, float v);
     glm::vec3 pos;
+    glm::vec2 tex;
 };
 
 struct Mesh

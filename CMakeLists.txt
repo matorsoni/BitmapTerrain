@@ -20,6 +20,7 @@ add_executable(
     src/Mesh.cpp
     src/MeshRenderer.cpp
     src/ShaderProgram.cpp
+    src/Texture.cpp
     src/Window.cpp
 )
 

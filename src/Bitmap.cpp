@@ -1,5 +1,6 @@
 #include "Bitmap.hpp"
 
+// Create stb_image implementation. Only define it once in this project.
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 

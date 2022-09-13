@@ -5,6 +5,7 @@
 class Camera;
 class Mesh;
 class ShaderProgram;
+class Texture;
 
 class MeshRenderer
 {
@@ -14,8 +15,9 @@ public:
     // Set reference to the mesh that will be rendered and send data to the GPU.
     void updateMesh(const Mesh& mesh);
 
-    // Render mesh specifying camera and shaders.
+    // Render mesh.
     void draw(Camera& camera, const ShaderProgram& program) const;
+    void draw(Camera& camera, const ShaderProgram& program, const Texture& texture) const;
 
     // Switch wireframe mode on and off.
     void toggleWireframeOnOff();

@@ -105,3 +105,14 @@ void ShaderProgram::setUniformMat4f(const char* uniform_name, const glm::mat4& m
 
     glUniformMatrix4fv(uniform_location, 1, GL_FALSE, &mat[0][0]);
 }
+
+void ShaderProgram::setUniform1i(const char* uniform_name, int value) const
+{
+    int uniform_location = glGetUniformLocation(id_, uniform_name);
+    if (uniform_location == -1) {
+        cout << "Unable to locate uniform " << uniform_name << endl;
+        return;
+    }
+
+    glUniform1i(uniform_location, value);
+}

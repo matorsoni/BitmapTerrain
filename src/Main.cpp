@@ -7,6 +7,7 @@
 #include "Mesh.hpp"
 #include "MeshRenderer.hpp"
 #include "ShaderProgram.hpp"
+#include "Texture.hpp"
 #include "Window.hpp"
 
 using std::cout;
@@ -46,8 +47,10 @@ int main(int argc, char** argv)
     }
 
     // Create basic shader program.
-    const auto program = ShaderProgram("../src/shader/Vert.glsl",
-                                       "../src/shader/Frag.glsl");
+    const auto program_color = ShaderProgram("../src/shader/Vert.glsl",
+                                             "../src/shader/Frag.glsl");
+    const auto program_texture = ShaderProgram("../src/shader/Vert_Texture.glsl",
+                                               "../src/shader/Frag_Texture.glsl");
 
     // Create terrain mesh.
     Mesh terrain;
@@ -61,6 +64,8 @@ int main(int argc, char** argv)
 
         createBitmapMesh(terrain, bitmap.data(), bitmap.width(), bitmap.height());
     }
+
+    Texture texture("../assets/wood.jpeg");
 
     // Create camera.
     Camera camera(window_width, window_height);
@@ -81,7 +86,7 @@ int main(int argc, char** argv)
         processCallbackEvents();
         processNonCallbackEvents(window);
 
-        renderer.draw(camera, program);
+        renderer.draw(camera, program_texture, texture);
 
         swapBuffers(window);
     }
