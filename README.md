@@ -19,23 +19,37 @@ make -j4
 ./terrain
 ```
 
-Note: GLFW may ask for additional dependencies that are not installed in your system. Installing them and rebuilding this project should work fine.
-
-Running `./terrain` with no arguments will use the default image found in `BitmapTerrain/assets`.
-You can generate the terrain with other grayscale images by passing a valid image path as argument:
-
-`./terrain <path-to-image.png>`
+**Note:** GLFW may ask for additional dependencies that are not installed in your system. Installing them and rebuilding this project should work fine.
 
 
-For now it only works with true grayscale images. To convert any image to this format, I recommend running the following ImageMagick command:
+## Running the application
+
+Execution modes:
+
+(1) `./terrain`
+
+(2) `./terrain <path-to-grayscale-image.png>`
+
+(3) `./terrain <path-to-grayscale-image.png> <path-to-rgb-texture.jpeg>`
+
+Running (1) will create the default image terrain (`BitmapTerrain/assets/bitmap.png`) renderer with the default texture (`BitmapTerrain/assets/wood.jpeg`).
+
+Running (2) will create a terrain based on input image, renderer with the default texture.
+
+Running (3) will create a terrain based on input image, renderer with the input texture.
+
+**Note:** While textures can be of any image type, terrain generation only works with true grayscale images. To convert any image to this format, I recommend running the following ImageMagick command:
 
 `convert <input_image> -set colorspace Gray -separate -average <output_image.png>`
 
+
 ## Inputs
 
-- WASD for camera movement.
-- Mouse movement to rotate camera.
+- Move camera with WASD + mouse movement.
+- Mouse scroll to increase and decrease terrain height.
 - Press F to render on wireframe mode (On/Off).
+- Press T to apply texture (On/Off).
+- ESC to close application.
 
 # Samples
 

@@ -3,7 +3,7 @@
 in float y;
 out vec4 frag_color;
 
-const vec3 color0 = vec3(0.8, 0.8, 0.0);
+const vec3 color0 = vec3(0.2, 0.2, 0.8);
 const vec3 color1 = vec3(1.0, 0.0, 0.0);
 vec3 color_lerp(float t)
 {

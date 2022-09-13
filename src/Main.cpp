@@ -1,6 +1,7 @@
 #include <cassert>
 #include <iostream>
 #include <string>
+#include <tuple> // for std::tuple
 
 #include "Bitmap.hpp"
 #include "Camera.hpp"
@@ -13,28 +14,43 @@
 using std::cout;
 using std::endl;
 using std::string;
+using std::tuple;
 
 // Parse arguments. Possible inputs are:
-// - No inputs -> Render default image (../assets/bitmap.png).
-// - 1 Path to image -> Render input image.
-string parseArguments(int argc, char** argv)
+// No inputs:
+//     -> Render default image terrain (../assets/bitmap.png).
+//     -> Texture with default image (../assets/wood.jpeg).
+// 1 path to image file:
+//     -> Render input image terrain.
+//     -> Texture with default image.
+// 2 paths to image files:
+//     -> Render first input image terrain.
+//     -> Texture with second image.
+tuple<string, string> parseArguments(int argc, char** argv)
 {
+    // No arguments.
     if (argc == 1) {
-        return "../assets/bitmap.png";
+        return {"../assets/bitmap.png", "../assets/wood.jpeg"};
     }
+    // 1 argument.
     else if (argc == 2) {
-        return argv[1];
+        return {argv[1], "../assets/wood.jpeg"};
+    }
+    // 2 arguments.
+    else if (argc == 3) {
+        return {argv[1], argv[2]};
     }
     else {
-        cout << "Only 1 argument is accepted." << endl;
-        return "";
+        cout << "Two arguments maximum are accepted." << endl;
+        return {"", ""};
     }
 }
 
 int main(int argc, char** argv)
 {
-    string path_to_img = parseArguments(argc, argv);
-    if (path_to_img.size() == 0) {
+    // Using C++17 structured binding.
+    auto [path_to_img, path_to_tex] = parseArguments(argc, argv);
+    if (path_to_img.empty() || path_to_tex.empty()) {
         return -1;
     }
 
@@ -52,7 +68,7 @@ int main(int argc, char** argv)
         Bitmap bitmap;
         auto success = bitmap.loadFromFile(path_to_img);
         if (!success) {
-            cout << "Failed loading image from file: " << path_to_img << endl;
+            cout << "Failed loading terrain image from file: " << path_to_img << endl;
             return -1;
         }
 
@@ -64,10 +80,9 @@ int main(int argc, char** argv)
     Texture texture;
     {
         Bitmap bitmap;
-        string path_to_tex("../assets/wood.jpeg");
         auto success = bitmap.loadFromFile(path_to_tex, true);
         if (!success) {
-            cout << "Failed loading image from file: " << path_to_tex << endl;
+            cout << "Failed loading texture image from file: " << path_to_tex << endl;
             return -1;
         }
 

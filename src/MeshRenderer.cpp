@@ -114,8 +114,8 @@ void MeshRenderer::toggleTextureOnOff()
 
 void MeshRenderer::controlYScale(float delta)
 {
-    static constexpr float lower_bound = 0.5f;
-    static constexpr float upper_bound = 10.0f;
+    static constexpr float lower_bound = 0.2f;
+    static constexpr float upper_bound = 6.0f;
 
     yscale_ += delta;
     if (yscale_ < lower_bound) {
