@@ -5,7 +5,7 @@
 #include "stb_image.h"
 
 Bitmap::Bitmap():
-    data_(nullptr), width_(0), height_(0)
+    data_(nullptr), width_(0), height_(0), channels_(0)
 {
 }
 
@@ -17,33 +17,33 @@ Bitmap::~Bitmap()
     }
 }
 
-bool Bitmap::loadFromFile(const std::string& filename)
+bool Bitmap::loadFromFile(const std::string& filename, bool shouldFlip)
 {
-    int w, h, c;
-    unsigned char* data = stbi_load(filename.c_str(), &w, &h, &c, 1);
-
-    if (data == nullptr || w <= 0 || h <= 0 || c != 1) {
-        return false;
+    if (shouldFlip) {
+        stbi_set_flip_vertically_on_load(1);
     }
 
-    data_ = data;
-    width_ = w;
-    height_ = h;
+    data_ = stbi_load(filename.c_str(), &width_, &height_, &channels_, 0);
 
-    return true;
+    return data_ && width_ > 0 && height_ > 0;
 }
 
-unsigned char* Bitmap::data()
+unsigned char* Bitmap::data() const
 {
     return data_;
 }
 
-int Bitmap::width()
+int Bitmap::width() const
 {
     return width_;
 }
 
-int Bitmap::height()
+int Bitmap::height() const
 {
     return height_;
+}
+
+int Bitmap::channels() const
+{
+    return channels_;
 }

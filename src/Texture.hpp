@@ -6,9 +6,10 @@
 class Texture
 {
 public:
-    Texture(const std::string& filename);
-    ~Texture() = default;
+    Texture();
 
+    // Create texture from image.
+    void create(unsigned char* data, int width, int height, int channels);
     // Bind texture to a specific slot.
     void bind(int slot = 0) const;
     // Unbind texture.
@@ -16,10 +17,6 @@ public:
 
 private:
     unsigned int id_;
-    int width_;
-    int height_;
-    int channels_;
-    unsigned char* buffer_;
 };
 
 #endif // TEXTURE_HPP

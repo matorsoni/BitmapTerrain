@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iostream>
 #include <string>
 
@@ -52,7 +53,7 @@ int main(int argc, char** argv)
     const auto program_texture = ShaderProgram("../src/shader/Vert_Texture.glsl",
                                                "../src/shader/Frag_Texture.glsl");
 
-    // Create terrain mesh.
+    // Create terrain mesh from grayscale bitmap.
     Mesh terrain;
     {
         Bitmap bitmap;
@@ -62,10 +63,23 @@ int main(int argc, char** argv)
             return -1;
         }
 
+        assert(bitmap.channels() == 1);
         createBitmapMesh(terrain, bitmap.data(), bitmap.width(), bitmap.height());
     }
 
-    Texture texture("../assets/wood.jpeg");
+    // Create texture.
+    Texture texture;
+    {
+        Bitmap bitmap;
+        string path_to_tex("../assets/wood.jpeg");
+        auto success = bitmap.loadFromFile(path_to_tex, true);
+        if (!success) {
+            cout << "Failed loading image from file: " << path_to_tex << endl;
+            return -1;
+        }
+
+        texture.create(bitmap.data(), bitmap.width(), bitmap.height(), bitmap.channels());
+    }
 
     // Create camera.
     Camera camera(window_width, window_height);
