@@ -24,6 +24,7 @@ MeshRenderer::MeshRenderer():
 
     // Set background color.
     glClearColor(0.0f, 0.15f, 0.15, 1.0f);
+    glEnable(GL_DEPTH_TEST);
 
     // Log useful info.
     cout << "OpenGL version " << glGetString(GL_VERSION) << endl;

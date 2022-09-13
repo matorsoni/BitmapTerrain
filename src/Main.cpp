@@ -64,7 +64,7 @@ int main(int argc, char** argv)
         }
 
         assert(bitmap.channels() == 1);
-        createBitmapMesh(terrain, bitmap.data(), bitmap.width(), bitmap.height());
+        createBitmapMesh(terrain, bitmap.data(), bitmap.width(), bitmap.height(), 3.0f);
     }
 
     // Create texture.
