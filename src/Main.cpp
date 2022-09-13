@@ -72,7 +72,8 @@ int main(int argc, char** argv)
 
     // Create renderer.
     MeshRenderer renderer;
-    renderer.updateMesh(terrain);
+    renderer.pushMesh(terrain);
+    renderer.setTexture(texture);
 
     // Setup input handler, passing every object that will respond to external inputs.
     HANDLER.window_width = window_width;
@@ -86,7 +87,7 @@ int main(int argc, char** argv)
         processCallbackEvents();
         processNonCallbackEvents(window);
 
-        renderer.draw(camera, program_texture, texture);
+        renderer.draw(camera, program_texture);
 
         swapBuffers(window);
     }

@@ -14,6 +14,7 @@ using std::endl;
 
 MeshRenderer::MeshRenderer():
     mesh_ptr_(nullptr),
+    tex_ptr_(nullptr),
     wireframe_(true),
     vao_(0), vbo_(0), ebo_(0)
 {
@@ -31,7 +32,7 @@ MeshRenderer::MeshRenderer():
     cout << "OpenGL vendor: " << glGetString(GL_VENDOR) << endl;
 }
 
-void MeshRenderer::updateMesh(const Mesh& mesh)
+void MeshRenderer::pushMesh(const Mesh& mesh)
 {
     // Populate OpenGL's VAO and pass vertex data to the GPU.
     glBindVertexArray(vao_);
@@ -58,6 +59,11 @@ void MeshRenderer::updateMesh(const Mesh& mesh)
     glBindVertexArray(0);
 }
 
+void MeshRenderer::setTexture(const Texture& texture)
+{
+    tex_ptr_ = &texture;
+}
+
 void MeshRenderer::draw(Camera& camera, const ShaderProgram& program) const
 {
     assert(mesh_ptr_ != nullptr);
@@ -70,6 +76,11 @@ void MeshRenderer::draw(Camera& camera, const ShaderProgram& program) const
     program.setUniformMat4f("View", camera.view());
     program.setUniformMat4f("Projection", camera.projection());
 
+    if (tex_ptr_ != nullptr) {
+        tex_ptr_->bind();
+        program.setUniform1i("tex_sampler", 0);
+    }
+
     // Render on wireframe or fill mode.
     glPolygonMode(GL_FRONT_AND_BACK, wireframe_ ? GL_LINE : GL_FILL);
 
@@ -80,14 +91,6 @@ void MeshRenderer::draw(Camera& camera, const ShaderProgram& program) const
 
     // Unbind VAO after finishing.
     glBindVertexArray(0);
-}
-
-void MeshRenderer::draw(Camera& camera, const ShaderProgram& program, const Texture& texture) const
-{
-    texture.bind();
-    program.use();
-    program.setUniform1i("tex_sampler", 0);
-    draw(camera, program);
 }
 
 void MeshRenderer::toggleWireframeOnOff()

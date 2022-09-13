@@ -13,11 +13,11 @@ public:
     MeshRenderer();
 
     // Set reference to the mesh that will be rendered and send data to the GPU.
-    void updateMesh(const Mesh& mesh);
+    void pushMesh(const Mesh& mesh);
+    void setTexture(const Texture& texture);
 
     // Render mesh.
     void draw(Camera& camera, const ShaderProgram& program) const;
-    void draw(Camera& camera, const ShaderProgram& program, const Texture& texture) const;
 
     // Switch wireframe mode on and off.
     void toggleWireframeOnOff();
@@ -25,6 +25,7 @@ public:
 private:
     // Reference to the mesh that will be rendered.
     const Mesh* mesh_ptr_;
+    const Texture* tex_ptr_;
 
     // Render on wireframe.
     bool wireframe_;
